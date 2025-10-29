@@ -78,20 +78,29 @@ In this example:
 
 ### Interactor-like method
 
-[Under Development]
+If you feel like an interactor, sometimes, is too much for a small non-reusable piece of logic, you can define a method
+and use it as an interactor, just pass a symbol with the method name as you would with a normal interactor
 
 ``` ruby
 class PlaceOrder
   include Interactor::Organizer
 
+  def create_order
+    Order.create(context.order_attr)
+  end
+
   def send_thank_you
     Email.new(to: context.client.email, content: "thanks :D")
   end
 
-  organize CreateOrder,
-           { class: :send_thanks_you }
+  organize :create_order,
+           { class: :send_thank_you }
 end
 ```
+
+In this example we use 0 Interactors, and rely only on methods.
+
+**Conditional logic defined above still applies!!!**
 
 ## Development
 
