@@ -1,38 +1,105 @@
 # BetterInteractor
 
-TODO: Delete this and the text below, and describe your gem
+Better Interactor is a gem that aims to extend the default usage for the [Interactor](https://github.com/collectiveidea/interactor) gem. The default Interactor usage is unchanged, extended with new possibilities:
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/better_interactor`. To experiment with that code, run `bin/console` for an interactive prompt.
+- adding a condition to your interactors, in the organizer, to skip its call, if that returns false
+- defining a default condition for each interactor call, in the organizer
+- [UNDER DEVELOPMENT] defining a method inside the organizer and call that instead of an organizer
 
 ## Installation
-
-TODO: Replace `UPDATE_WITH_YOUR_GEM_NAME_IMMEDIATELY_AFTER_RELEASE_TO_RUBYGEMS_ORG` with your gem name right after releasing it to RubyGems.org. Please do not do it earlier due to security reasons. Alternatively, replace this section with instructions to install your gem from git if you don't plan to release to RubyGems.org.
 
 Install the gem and add to the application's Gemfile by executing:
 
 ```bash
-bundle add UPDATE_WITH_YOUR_GEM_NAME_IMMEDIATELY_AFTER_RELEASE_TO_RUBYGEMS_ORG
+bundle add better_interactor
 ```
 
 If bundler is not being used to manage dependencies, install the gem by executing:
 
 ```bash
-gem install UPDATE_WITH_YOUR_GEM_NAME_IMMEDIATELY_AFTER_RELEASE_TO_RUBYGEMS_ORG
+gem install better_interactor
 ```
 
 ## Usage
 
-TODO: Write usage instructions here
+### Conditional Call
+
+passing an hash instead of and interactor allows you to define 2 keys inside of it:
+
+- class: with the interactor class name
+- if: with a symbol with the same name as the method that responds to our condition
+
+``` ruby
+class PlaceOrder
+  include Interactor::Organizer
+
+  def should_send_thank_you?
+    context.client.is_a_good_client?
+  end
+
+  organize CreateOrder,
+           { class: ChargeCard }
+           { class: SendThankYou, if: :should_send_thank_you? }
+end
+```
+
+In this example:
+
+- CreateOrder will always be called, because you passed only the class
+- ChargeCard will always be called, because there's no "if"
+- SendThankYou will be called only if the method should_send_thank_you?, with the passed context, returns true
+
+### Default Condition
+
+This grants a default condition name for the method to call, defined as follows:
+"can_[interactor class name underscored]?"
+
+``` ruby
+class PlaceOrder
+  include Interactor::Organizer
+
+  def can_send_thank_you?
+    context.client.is_a_good_client?
+  end
+
+  organize CreateOrder,
+           { class: ChargeCard }
+           { class: SendThankYou }
+end
+```
+
+In this example:
+
+- CreateOrder will always be called, because you passed only the class
+- ChargeCard will always be called, because there's no method named **can_charge_card?**
+- SendThankYou will be called only if the method **can_send_thank_you?**, with the passed context, returns true
+
+**In case of Interactors inside of Modules (Client::SendThanksYou) the modules are included inside the method name (can_client_send_thanks_you?)**
+
+### Interactor-like method
+
+[Under Development]
+
+``` ruby
+class PlaceOrder
+  include Interactor::Organizer
+
+  def send_thank_you
+    Email.new(to: context.client.email, content: "thanks :D")
+  end
+
+  organize CreateOrder,
+           { class: :send_thanks_you }
+end
+```
 
 ## Development
 
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
-
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and the created tag, and push the `.gem` file to [rubygems.org](https://rubygems.org).
+Clone this repo, run bundle and you are good to go.
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/better_interactor.
+Bug reports and pull requests are welcome on GitHub at https://github.com/gimbardo/better_interactor.
 
 ## License
 
