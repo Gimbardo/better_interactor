@@ -4,7 +4,7 @@ Better Interactor is a gem that aims to extend the default usage for the [Intera
 
 - adding a condition to your interactors, in the organizer, to skip its call, if that returns false
 - defining a default condition for each interactor call, in the organizer
-- [UNDER DEVELOPMENT] defining a method inside the organizer and call that instead of an organizer
+- defining a method inside the organizer and call that instead of an organizer
 
 ## Installation
 
@@ -24,7 +24,7 @@ gem install better_interactor
 
 ### Conditional Call
 
-passing an hash instead of and interactor allows you to define 2 keys inside of it:
+passing an hash instead of an interactor allows you to define 2 keys inside of it:
 
 - class: with the interactor class name
 - if: with a symbol with the same name as the method that responds to our condition
@@ -74,7 +74,7 @@ In this example:
 - ChargeCard will always be called, because there's no method named **can_charge_card?**
 - SendThankYou will be called only if the method **can_send_thank_you?**, with the passed context, returns true
 
-**In case of Interactors inside of Modules (Client::SendThanksYou) the modules are included inside the method name (can_client_send_thanks_you?)**
+**In case of Interactors inside of Modules (Client::SendThankYou) the modules are included inside the method name (can_client_send_thank_you?)**
 
 ### Interactor-like method
 
@@ -109,6 +109,13 @@ Clone this repo, run bundle and you are good to go.
 ## Contributing
 
 Bug reports and pull requests are welcome on GitHub at https://github.com/gimbardo/better_interactor.
+
+To contribute:
+
+1. Fork the project.
+2. Write a failing test.
+3. Commit changes that fix the tests.
+5. Be patient.
 
 ## License
 
